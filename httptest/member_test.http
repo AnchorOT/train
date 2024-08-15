@@ -1,0 +1,5 @@
+### GET request to example server
+GET http://localhost:80/member/hello
+Accept: application/json
+
+###
