@@ -2,7 +2,7 @@ package com.anchor.train.member.controller;
 
 import com.anchor.train.member.req.MemberRegisterReq;
 import com.anchor.train.member.service.MemberService;
-import com.anchor.train.resp.CommonResp;
+import com.anchor.train.common.resp.CommonResp;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 

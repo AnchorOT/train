@@ -1,4 +1,4 @@
-package com.anchor.train.resp;
+package com.anchor.train.common.resp;
 
 public class CommonResp<T> {
 
