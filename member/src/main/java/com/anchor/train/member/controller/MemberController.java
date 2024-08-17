@@ -4,6 +4,7 @@ import com.anchor.train.member.req.MemberRegisterReq;
 import com.anchor.train.member.service.MemberService;
 import com.anchor.train.common.resp.CommonResp;
 import jakarta.annotation.Resource;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,7 +23,7 @@ public class MemberController {
     }
 
     @PostMapping("/register")
-    public CommonResp<Long> register(MemberRegisterReq req) {
+    public CommonResp<Long> register(@Validated MemberRegisterReq req) {
         long register = memberService.register(req);
 //        CommonResp<Long> commonResp = new CommonResp<Long>();
 //        commonResp.setContent(register);
