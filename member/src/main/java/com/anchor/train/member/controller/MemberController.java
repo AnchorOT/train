@@ -1,6 +1,7 @@
 package com.anchor.train.member.controller;
 
 import com.anchor.train.member.req.MemberRegisterReq;
+import com.anchor.train.member.req.MemberSendCodeReq;
 import com.anchor.train.member.service.MemberService;
 import com.anchor.train.common.resp.CommonResp;
 import jakarta.annotation.Resource;
@@ -29,5 +30,10 @@ public class MemberController {
 //        commonResp.setContent(register);
 //        return commonResp;
         return new CommonResp<>(register);
+    }
+    @PostMapping("/send-code")
+    public CommonResp<Long> register(@Validated MemberSendCodeReq req) {
+        memberService.SendCode(req);
+        return new CommonResp<>();
     }
 }
