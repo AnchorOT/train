@@ -1,18 +1,14 @@
 <template>
-  <a-row class="login">
-    <a-col :span="6" :offset="9" class="login-main">
-      <h1 style="text-align: center"><bank-two-tone />&nbsp;12306售票系统</h1>
-      <a-form
-          :model="loginForm"
-          name="basic"
-          autocomplete="off"
-      >
+  <a-row class="login" type="flex" justify="center" align="middle">
+    <a-col :span="8" class="login-main">
+      <h1 class="login-title"><bank-two-tone />&nbsp;12306售票系统</h1>
+      <a-form :model="loginForm" name="basic" autocomplete="off">
         <a-form-item
             label=""
             name="mobile"
             :rules="[{ required: true, message: '请输入手机号!' }]"
         >
-          <a-input v-model:value="loginForm.mobile" placeholder="手机号"/>
+          <a-input v-model:value="loginForm.mobile" placeholder="手机号" size="large"/>
         </a-form-item>
 
         <a-form-item
@@ -20,18 +16,16 @@
             name="code"
             :rules="[{ required: true, message: '请输入验证码!' }]"
         >
-          <a-input v-model:value="loginForm.code">
+          <a-input v-model:value="loginForm.code" placeholder="验证码" size="large">
             <template #addonAfter>
-              <a @click="sendCode">获取验证码</a>
+              <a-button type="link" @click="sendCode">获取验证码</a-button>
             </template>
           </a-input>
-          <!--<a-input v-model:value="loginForm.code" placeholder="验证码"/>-->
         </a-form-item>
 
         <a-form-item>
-          <a-button type="primary" block @click="login">登录</a-button>
+          <a-button type="primary" block size="large" @click="login">登录</a-button>
         </a-form-item>
-
       </a-form>
     </a-col>
   </a-row>
@@ -50,36 +44,33 @@ export default defineComponent({
     const router = useRouter();
 
     const loginForm = reactive({
-      mobile: '18888888888',
+      mobile: '18877776666',
       code: '',
     });
 
     const sendCode = () => {
-      axios.post("/member/member/send-code", {
-        mobile: loginForm.mobile
-      }).then(response => {
-        let data = response.data;
-        if (data.success) {
-          notification.success({ description: '发送验证码成功！' });
-          loginForm.code = "8888";
-        } else {
-          notification.error({ description: data.message });
-        }
-      });
+      axios.post("/member/member/send-code", { mobile: loginForm.mobile })
+          .then(response => {
+            if (response.data.success) {
+              notification.success({ description: '发送验证码成功！' });
+              loginForm.code = "8888";
+            } else {
+              notification.error({ description: response.data.message });
+            }
+          });
     };
 
     const login = () => {
-      axios.post("/member/member/login", loginForm).then((response) => {
-        let data = response.data;
-        if (data.success) {
-          notification.success({ description: '登录成功！' });
-          // 登录成功，跳到控台主页
-          router.push("/welcome");
-          store.commit("setMember", data.content);
-        } else {
-          notification.error({ description: data.message });
-        }
-      })
+      axios.post("/member/member/login", loginForm)
+          .then((response) => {
+            if (response.data.success) {
+              notification.success({ description: '登录成功！' });
+              router.push("/welcome");
+              store.commit("setMember", response.data.content);
+            } else {
+              notification.error({ description: response.data.message });
+            }
+          })
     };
 
     return {
@@ -91,16 +82,40 @@ export default defineComponent({
 });
 </script>
 
-<style>
-.login-main h1 {
-  font-size: 25px;
-  font-weight: bold;
+<style scoped>
+.login {
+  height: 100vh;
 }
+
 .login-main {
-  margin-top: 100px;
-  padding: 30px 30px 20px;
-  border: 2px solid grey;
-  border-radius: 10px;
-  background-color: #fcfcfc;
+  padding: 40px;
+  border-radius: 12px;
+  background-color: #f7f7f7;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 24px;
+  color: #1890ff;
+}
+
+a-button[type="link"] {
+  padding: 0;
+  margin-left: 8px;
+}
+
+a-input {
+  margin-bottom: 16px;
+}
+
+a-button {
+  margin-top: 12px;
+}
+
+.login-main h1 {
+  font-size: 28px;
 }
 </style>
