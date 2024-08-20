@@ -4,9 +4,9 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
-import cn.hutool.jwt.JWTUtil;
 import com.anchor.train.common.exception.BusinessException;
 import com.anchor.train.common.exception.BusinessExceptionEnum;
+import com.anchor.train.common.util.JwtUtil;
 import com.anchor.train.common.util.SnowUtil;
 import com.anchor.train.member.domain.Member;
 import com.anchor.train.member.domain.MemberExample;
@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class MemberService {
@@ -81,9 +80,7 @@ public class MemberService {
         //校验短信验证码
         if("8888".equals(code)){
             MemberLoginResp resp = BeanUtil.copyProperties(memberDB, MemberLoginResp.class);
-            Map<String, Object> map  = BeanUtil.beanToMap(resp);
-            String key = "Anchor12306";
-            String token = JWTUtil.createToken(map, key.getBytes());
+            String token = JwtUtil.createToken(resp.getId(), resp.getMobile());
             resp.setToken(token);
             return resp;
         }else {
