@@ -9,7 +9,7 @@ const routes = [{
     path: '/',
     component: () => import('../views/main.vue'),
     meta: {
-      loginRequire: false
+      loginRequire: true
     },
     children: [{
       path: 'welcome',
