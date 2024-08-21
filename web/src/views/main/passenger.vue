@@ -129,7 +129,7 @@ export default defineComponent({
       axios.post("/member/passenger/save", passenger.value).then((response) => {
         let data = response.data;
         if (data.success) {
-          notification.success({description: "添加成功！"});
+          notification.success({description: "成功！"});
           visible.value = false;
           handleQuery({
             page: pagination.value.current,
