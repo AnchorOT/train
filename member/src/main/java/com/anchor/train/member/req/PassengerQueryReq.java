@@ -1,6 +1,8 @@
 package com.anchor.train.member.req;
 
-public class PassengerQueryReq {
+import com.anchor.train.common.req.PageReq;
+
+public class PassengerQueryReq extends PageReq {
 
 
 //    @NotNull(message = "【会员ID】不能为空")
