@@ -36,10 +36,8 @@ public class StationService {
         if (ObjectUtil.isNull(station.getId())) {
 
             // 保存之前，先校验唯一键是否存在
-            StationExample stationExample = new StationExample();
-            stationExample.createCriteria().andNameEqualTo(req.getName());
-            List<Station> stations = stationMapper.selectByExample(stationExample);
-            if (ObjectUtil.isNotEmpty(stations)) {
+            Station stationDB = selectByUnique(req.getName());
+            if (ObjectUtil.isNotEmpty(stationDB)) {
                 throw new BusinessException(BusinessExceptionEnum.BUSINESS_STATION_NAME_UNIQUE_ERROR);
             }
 
@@ -50,6 +48,17 @@ public class StationService {
         } else {
             station.setUpdateTime(now);
             stationMapper.updateByPrimaryKey(station);
+        }
+    }
+
+    private Station selectByUnique(String name) {
+        StationExample stationExample = new StationExample();
+        stationExample.createCriteria().andNameEqualTo(name);
+        List<Station> stations = stationMapper.selectByExample(stationExample);
+        if (ObjectUtil.isNotEmpty(stations)) {
+            return stations.get(0);
+        }else {
+            return null;
         }
     }
 
@@ -68,11 +77,9 @@ public class StationService {
         LOG.info("总行数：{}", pageInfo.getTotal());
         LOG.info("总页数：{}", pageInfo.getPages());
 
-        List
-                <StationQueryResp> list = BeanUtil.copyToList(stationList, StationQueryResp.class);
+        List<StationQueryResp> list = BeanUtil.copyToList(stationList, StationQueryResp.class);
 
-        PageResp
-                <StationQueryResp> pageResp = new PageResp<>();
+        PageResp<StationQueryResp> pageResp = new PageResp<>();
         pageResp.setTotal(pageInfo.getTotal());
         pageResp.setList(list);
         return pageResp;
