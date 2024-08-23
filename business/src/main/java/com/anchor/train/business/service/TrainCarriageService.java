@@ -3,16 +3,19 @@ package com.anchor.train.business.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import com.anchor.train.common.resp.PageResp;
-import com.anchor.train.common.util.SnowUtil;
 import com.anchor.train.business.domain.TrainCarriage;
 import com.anchor.train.business.domain.TrainCarriageExample;
+import com.anchor.train.business.enums.SeatColEnum;
 import com.anchor.train.business.mapper.TrainCarriageMapper;
 import com.anchor.train.business.req.TrainCarriageQueryReq;
 import com.anchor.train.business.req.TrainCarriageSaveReq;
 import com.anchor.train.business.resp.TrainCarriageQueryResp;
+import com.anchor.train.common.exception.BusinessException;
+import com.anchor.train.common.exception.BusinessExceptionEnum;
+import com.anchor.train.common.resp.PageResp;
+import com.anchor.train.common.util.SnowUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,51 +26,83 @@ import java.util.List;
 @Service
 public class TrainCarriageService {
 
-private static final Logger LOG = LoggerFactory.getLogger(TrainCarriageService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TrainCarriageService.class);
 
-@Resource
-private TrainCarriageMapper trainCarriageMapper;
+    @Resource
+    private TrainCarriageMapper trainCarriageMapper;
 
-public void save(TrainCarriageSaveReq req) {
-DateTime now = DateTime.now();
-TrainCarriage trainCarriage = BeanUtil.copyProperties(req, TrainCarriage.class);
-if (ObjectUtil.isNull(trainCarriage.getId())) {
-trainCarriage.setId(SnowUtil.getSnowflakeNextId());
-trainCarriage.setCreateTime(now);
-trainCarriage.setUpdateTime(now);
-trainCarriageMapper.insert(trainCarriage);
-} else {
-trainCarriage.setUpdateTime(now);
-trainCarriageMapper.updateByPrimaryKey(trainCarriage);
-}
-}
+    public void save(TrainCarriageSaveReq req) {
+        DateTime now = DateTime.now();
 
-public PageResp
-<TrainCarriageQueryResp> queryList(TrainCarriageQueryReq req) {
-    TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
-    trainCarriageExample.setOrderByClause("id desc");
-    TrainCarriageExample.Criteria criteria = trainCarriageExample.createCriteria();
+        // 自动计算出列数和总座位数
+        List<SeatColEnum> seatColEnums = SeatColEnum.getColsByType(req.getSeatType());
+        req.setColCount(seatColEnums.size());
+        req.setSeatCount(req.getColCount() * req.getRowCount());
 
-    LOG.info("查询页码：{}", req.getPage());
-    LOG.info("每页条数：{}", req.getSize());
-    PageHelper.startPage(req.getPage(), req.getSize());
-    List<TrainCarriage> trainCarriageList = trainCarriageMapper.selectByExample(trainCarriageExample);
+        TrainCarriage trainCarriage = BeanUtil.copyProperties(req, TrainCarriage.class);
+        if (ObjectUtil.isNull(trainCarriage.getId())) {
+            // 保存之前，先校验唯一键是否存在
+            TrainCarriage trainCarriageDB = selectByUnique(req.getTrainCode(), req.getIndex());
+            if (ObjectUtil.isNotEmpty(trainCarriageDB)) {
+                throw new BusinessException(BusinessExceptionEnum.BUSINESS_TRAIN_CARRIAGE_INDEX_UNIQUE_ERROR);
+            }
+            trainCarriage.setId(SnowUtil.getSnowflakeNextId());
+            trainCarriage.setCreateTime(now);
+            trainCarriage.setUpdateTime(now);
+            trainCarriageMapper.insert(trainCarriage);
+        } else {
+            trainCarriage.setUpdateTime(now);
+            trainCarriageMapper.updateByPrimaryKey(trainCarriage);
+        }
+    }
+    private TrainCarriage selectByUnique(String trainCode, Integer index) {
+        TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
+        trainCarriageExample.createCriteria()
+                .andTrainCodeEqualTo(trainCode)
+                .andIndexEqualTo(index);
+        List<TrainCarriage> trainCarriages = trainCarriageMapper.selectByExample(trainCarriageExample);
+        if (ObjectUtil.isNotEmpty(trainCarriages)) {
+            return trainCarriages.get(0);
+        }else {
+            return null;
+        }
+    }
 
-    PageInfo<TrainCarriage> pageInfo = new PageInfo<>(trainCarriageList);
-    LOG.info("总行数：{}", pageInfo.getTotal());
-    LOG.info("总页数：{}", pageInfo.getPages());
+    public PageResp
+            <TrainCarriageQueryResp> queryList(TrainCarriageQueryReq req) {
+        TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
+        trainCarriageExample.setOrderByClause("id desc");
+        TrainCarriageExample.Criteria criteria = trainCarriageExample.createCriteria();
 
-    List
-    <TrainCarriageQueryResp> list = BeanUtil.copyToList(trainCarriageList, TrainCarriageQueryResp.class);
+        LOG.info("查询页码：{}", req.getPage());
+        LOG.info("每页条数：{}", req.getSize());
+        PageHelper.startPage(req.getPage(), req.getSize());
+        List<TrainCarriage> trainCarriageList = trainCarriageMapper.selectByExample(trainCarriageExample);
+
+        PageInfo<TrainCarriage> pageInfo = new PageInfo<>(trainCarriageList);
+        LOG.info("总行数：{}", pageInfo.getTotal());
+        LOG.info("总页数：{}", pageInfo.getPages());
+
+        List
+                <TrainCarriageQueryResp> list = BeanUtil.copyToList(trainCarriageList, TrainCarriageQueryResp.class);
 
         PageResp
-        <TrainCarriageQueryResp> pageResp = new PageResp<>();
-            pageResp.setTotal(pageInfo.getTotal());
-            pageResp.setList(list);
-            return pageResp;
-            }
+                <TrainCarriageQueryResp> pageResp = new PageResp<>();
+        pageResp.setTotal(pageInfo.getTotal());
+        pageResp.setList(list);
+        return pageResp;
+    }
 
-            public void delete(Long id) {
-            trainCarriageMapper.deleteByPrimaryKey(id);
-            }
-            }
+    public void delete(Long id) {
+        trainCarriageMapper.deleteByPrimaryKey(id);
+    }
+
+    public List<TrainCarriage> selectByTrainCode(String trainCode) {
+        TrainCarriageExample trainCarriageExample = new TrainCarriageExample();
+        trainCarriageExample.setOrderByClause("`index` asc");
+        TrainCarriageExample.Criteria criteria = trainCarriageExample.createCriteria();
+        criteria.andTrainCodeEqualTo(trainCode);
+        return trainCarriageMapper.selectByExample(trainCarriageExample);
+    }
+
+}

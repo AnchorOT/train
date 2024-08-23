@@ -57,7 +57,7 @@ public class StationService {
         List<Station> stations = stationMapper.selectByExample(stationExample);
         if (ObjectUtil.isNotEmpty(stations)) {
             return stations.get(0);
-        }else {
+        } else {
             return null;
         }
     }
@@ -88,6 +88,7 @@ public class StationService {
     public void delete(Long id) {
         stationMapper.deleteByPrimaryKey(id);
     }
+
     public List<StationQueryResp> queryAll() {
         StationExample stationExample = new StationExample();
         stationExample.setOrderByClause("name_pinyin asc");

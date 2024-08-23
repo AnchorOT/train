@@ -20,7 +20,7 @@ public enum SeatColEnum {
 
     private String desc;
 
-    /**
+    /**`
      * 对应SeatTypeEnum.code
      */
     private String type;
