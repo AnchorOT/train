@@ -73,7 +73,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, code, `type`, `start`, start_pinyin, start_time, `end`, end_pinyin, end_time, 
+    id, code, `type`, `start`, start_pinyin, start_time, `end`, end_pinyin, end_time,
     create_time, update_time
   </sql>
   <select id="selectByExample" parameterType="com.anchor.train.business.domain.TrainExample" resultMap="BaseResultMap">
@@ -91,7 +91,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from train
     where id = #{id,jdbcType=BIGINT}
@@ -107,14 +107,14 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.anchor.train.business.domain.Train">
-    insert into train (id, code, `type`, `start`, 
-      start_pinyin, start_time, `end`, 
-      end_pinyin, end_time, create_time, 
-      update_time)
-    values (#{id,jdbcType=BIGINT}, #{code,jdbcType=VARCHAR}, #{type,jdbcType=CHAR}, #{start,jdbcType=VARCHAR}, 
-      #{startPinyin,jdbcType=VARCHAR}, #{startTime,jdbcType=TIME}, #{end,jdbcType=VARCHAR}, 
-      #{endPinyin,jdbcType=VARCHAR}, #{endTime,jdbcType=TIME}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+    insert into train (id, code, `type`, `start`,
+                       start_pinyin, start_time, `end`,
+                       end_pinyin, end_time, create_time,
+                       update_time)
+    values (#{id,jdbcType=BIGINT}, #{code,jdbcType=VARCHAR}, #{type,jdbcType=CHAR}, #{start,jdbcType=VARCHAR},
+            #{startPinyin,jdbcType=VARCHAR}, #{startTime,jdbcType=TIME}, #{end,jdbcType=VARCHAR},
+            #{endPinyin,jdbcType=VARCHAR}, #{endTime,jdbcType=TIME}, #{createTime,jdbcType=TIMESTAMP},
+            #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.anchor.train.business.domain.Train">
     insert into train
@@ -239,16 +239,16 @@
   <update id="updateByExample" parameterType="map">
     update train
     set id = #{record.id,jdbcType=BIGINT},
-      code = #{record.code,jdbcType=VARCHAR},
-      `type` = #{record.type,jdbcType=CHAR},
-      `start` = #{record.start,jdbcType=VARCHAR},
-      start_pinyin = #{record.startPinyin,jdbcType=VARCHAR},
-      start_time = #{record.startTime,jdbcType=TIME},
-      `end` = #{record.end,jdbcType=VARCHAR},
-      end_pinyin = #{record.endPinyin,jdbcType=VARCHAR},
-      end_time = #{record.endTime,jdbcType=TIME},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    code = #{record.code,jdbcType=VARCHAR},
+    `type` = #{record.type,jdbcType=CHAR},
+    `start` = #{record.start,jdbcType=VARCHAR},
+    start_pinyin = #{record.startPinyin,jdbcType=VARCHAR},
+    start_time = #{record.startTime,jdbcType=TIME},
+    `end` = #{record.end,jdbcType=VARCHAR},
+    end_pinyin = #{record.endPinyin,jdbcType=VARCHAR},
+    end_time = #{record.endTime,jdbcType=TIME},
+    create_time = #{record.createTime,jdbcType=TIMESTAMP},
+    update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -292,15 +292,15 @@
   <update id="updateByPrimaryKey" parameterType="com.anchor.train.business.domain.Train">
     update train
     set code = #{code,jdbcType=VARCHAR},
-      `type` = #{type,jdbcType=CHAR},
-      `start` = #{start,jdbcType=VARCHAR},
-      start_pinyin = #{startPinyin,jdbcType=VARCHAR},
-      start_time = #{startTime,jdbcType=TIME},
-      `end` = #{end,jdbcType=VARCHAR},
-      end_pinyin = #{endPinyin,jdbcType=VARCHAR},
-      end_time = #{endTime,jdbcType=TIME},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+        `type` = #{type,jdbcType=CHAR},
+        `start` = #{start,jdbcType=VARCHAR},
+        start_pinyin = #{startPinyin,jdbcType=VARCHAR},
+        start_time = #{startTime,jdbcType=TIME},
+        `end` = #{end,jdbcType=VARCHAR},
+        end_pinyin = #{endPinyin,jdbcType=VARCHAR},
+        end_time = #{endTime,jdbcType=TIME},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>
