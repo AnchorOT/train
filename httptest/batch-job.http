@@ -63,3 +63,7 @@ Content-Type: application/json
 "name": "com.anchor.train.batch.job.DailyTrainJob",
 "jobGroupName": "default"
 }
+
+###
+GET http://localhost:8003/batch/hello
+Accept: application/json
