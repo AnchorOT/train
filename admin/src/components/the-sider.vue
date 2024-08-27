@@ -109,7 +109,7 @@
         <template #title>
           <span>
             <UnorderedListOutlined />
-            跑批管理
+            Batch管理
           </span>
         </template>
         <a-menu-item key="/batch/job">
