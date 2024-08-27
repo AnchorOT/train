@@ -114,7 +114,7 @@ public class DailyTrainSeatService {
             dailyTrainSeat.setUpdateTime(now);
             dailyTrainSeat.setDate(date);
             dailyTrainSeat.setSell(sell);
-//            LOG.info("该车次没有座位基础数据，生成该车次的座位信息结束 {}",sell);
+//
             dailyTrainSeatMapper.insert(dailyTrainSeat);
         }
         LOG.info("生成日期【{}】车次【{}】的座位信息结束", DateUtil.formatDate(date), trainCode);
