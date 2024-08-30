@@ -50,6 +50,9 @@ public class ConfirmOrderService {
     @Resource
     private DailyTrainSeatService dailyTrainSeatService;
 
+    @Resource
+    private AfterConfirmOrderService afterConfirmOrderService;
+
 
     public void save(ConfirmOrderDoReq req) {
         DateTime now = DateTime.now();
@@ -150,6 +153,15 @@ public class ConfirmOrderService {
                 offsetList.add(offset);
             }
             LOG.info("计算得到所有座位的相对第一个座位的偏移值：{}", offsetList);
+            getSeat(finalSeatList,
+                    date,
+                    trainCode,
+                    ticketReq0.getSeatTypeCode(),
+                    ticketReq0.getSeat().split("")[0], // 从A1得到A
+                    offsetList,
+                    dailyTrainTicket.getStartIndex(),
+                    dailyTrainTicket.getEndIndex()
+            );
         }else{
             LOG.info("本次购票没有选座");
             for (ConfirmOrderTicketReq ticketReq : tickets) {
@@ -171,12 +183,12 @@ public class ConfirmOrderService {
         // 余票详情表修改余票；
         // 为会员增加购票记录
         // 更新确认订单为成功
-//        try {
-//            afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, finalSeatList, tickets, confirmOrder);
-//        } catch (Exception e) {
-//            LOG.error("保存购票信息失败", e);
-//            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
-//        }
+        try {
+            afterConfirmOrderService.afterDoConfirm(dailyTrainTicket, finalSeatList, tickets, confirmOrder);
+        } catch (Exception e) {
+            LOG.error("保存购票信息失败", e);
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_EXCEPTION);
+        }
     }
     private void getSeat(List<DailyTrainSeat> finalSeatList, Date date, String trainCode, String seatType, String column, List<Integer> offsetList, Integer startIndex, Integer endIndex) {
         List<DailyTrainSeat> getSeatList = new ArrayList<>();

@@ -3,10 +3,14 @@ package com.anchor.train.business.service;
 import com.anchor.train.business.domain.ConfirmOrder;
 import com.anchor.train.business.domain.DailyTrainSeat;
 import com.anchor.train.business.domain.DailyTrainTicket;
+import com.anchor.train.business.enums.ConfirmOrderStatusEnum;
+import com.anchor.train.business.feign.MemberFeign;
 import com.anchor.train.business.mapper.ConfirmOrderMapper;
 import com.anchor.train.business.mapper.DailyTrainSeatMapper;
 import com.anchor.train.business.mapper.cust.DailyTrainTicketMapperCust;
 import com.anchor.train.business.req.ConfirmOrderTicketReq;
+import com.anchor.train.common.req.MemberTicketReq;
+import com.anchor.train.common.resp.CommonResp;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +29,9 @@ public class AfterConfirmOrderService {
 
     @Resource
     private DailyTrainTicketMapperCust dailyTrainTicketMapperCust;
-//
-//    @Resource
-//    private MemberFeign memberFeign;
+
+    @Resource
+    private MemberFeign memberFeign;
 
     @Resource
     private ConfirmOrderMapper confirmOrderMapper;
@@ -100,7 +104,7 @@ public class AfterConfirmOrderService {
                     maxEndIndex);
 
             // 调用会员服务接口，为会员增加一张车票
-           /* MemberTicketReq memberTicketReq = new MemberTicketReq();
+            MemberTicketReq memberTicketReq = new MemberTicketReq();
             memberTicketReq.setMemberId(confirmOrder.getMemberId());
             memberTicketReq.setPassengerId(tickets.get(j).getPassengerId());
             memberTicketReq.setPassengerName(tickets.get(j).getPassengerName());
@@ -122,7 +126,7 @@ public class AfterConfirmOrderService {
             confirmOrderForUpdate.setId(confirmOrder.getId());
             confirmOrderForUpdate.setUpdateTime(new Date());
             confirmOrderForUpdate.setStatus(ConfirmOrderStatusEnum.SUCCESS.getCode());
-            confirmOrderMapper.updateByPrimaryKeySelective(confirmOrderForUpdate);*/
+            confirmOrderMapper.updateByPrimaryKeySelective(confirmOrderForUpdate);
             // 模拟调用方出现异常
             // Thread.sleep(10000);
             // if (1 == 1) {
