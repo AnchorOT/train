@@ -3,6 +3,11 @@ Accept: application/json
 
 
 ###
+GET http://localhost:8001/member/hello
+Accept: application/json
+
+
+###
 
 GET http://localhost:8000/member/member/count
 Accept: application/json
