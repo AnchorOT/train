@@ -27,11 +27,13 @@ import com.github.pagehelper.PageInfo;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ConfirmOrderService {
@@ -52,6 +54,10 @@ public class ConfirmOrderService {
 
     @Resource
     private AfterConfirmOrderService afterConfirmOrderService;
+
+    @Resource
+    private StringRedisTemplate redisTemplate;
+
 
 
     public void save(ConfirmOrderDoReq req) {
@@ -97,7 +103,16 @@ public class ConfirmOrderService {
         confirmOrderMapper.deleteByPrimaryKey(id);
     }
 
-    public void doConfirm(ConfirmOrderDoReq req) {
+    public synchronized void  doConfirm(ConfirmOrderDoReq req) {
+        String key = req.getDate()+"-"+req.getTrainCode();
+
+        Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(key, key, 5, TimeUnit.SECONDS);
+        if ((setIfAbsent)){
+            LOG.info("恭喜，抢到锁了");
+        }else {
+            LOG.info("没抢到锁");
+            throw new BusinessException(BusinessExceptionEnum.CONFIRM_ORDER_LOCK_FAIL);
+        }
         Date date = req.getDate();
         String trainCode = req.getTrainCode();
         String start = req.getStart();
@@ -284,7 +299,7 @@ public class ConfirmOrderService {
      * 全部是0，表示这个区间可买；只要有1，就表示区间内已售过票
 
      * 选中后，要计算购票后的sell，比如原来是10001，本次购买区间站1~4
-     * 方案：构造本次购票造成的售卖信息01110，和原sell 10001按位与，最终得到11111
+     * 方案：构造本次购票造成的售卖信息01110，和原sell 10001按 位与运算，最终得到11111
      */
     private boolean calSell(DailyTrainSeat dailyTrainSeat, Integer startIndex, Integer endIndex) {
         // 00001, 00000
