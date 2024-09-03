@@ -103,7 +103,7 @@ public class ConfirmOrderService {
         confirmOrderMapper.deleteByPrimaryKey(id);
     }
 
-    public synchronized void  doConfirm(ConfirmOrderDoReq req) {
+    public  void  doConfirm(ConfirmOrderDoReq req) {
         String key = req.getDate()+"-"+req.getTrainCode();
 
         Boolean setIfAbsent = redisTemplate.opsForValue().setIfAbsent(key, key, 5, TimeUnit.SECONDS);
