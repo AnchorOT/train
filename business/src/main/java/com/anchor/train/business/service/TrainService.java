@@ -31,6 +31,9 @@ public class TrainService {
     @Resource
     private TrainMapper trainMapper;
 
+    @Resource
+    private TrainSeatService trainSeatService;
+
     public void save(TrainSaveReq req) {
         DateTime now = DateTime.now();
         Train train = BeanUtil.copyProperties(req, Train.class);
@@ -84,7 +87,11 @@ public class TrainService {
         return pageResp;
     }
 
+    @Transactional
     public void delete(Long id) {
+        Train train = trainMapper.selectByPrimaryKey(id);
+        LOG.info("要删除的火车信息{}",train);
+        trainSeatService.delete(train.getCode());
         trainMapper.deleteByPrimaryKey(id);
     }
     @Transactional

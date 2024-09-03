@@ -1,12 +1,11 @@
 package com.anchor.train.business.controller.admin;
 
-import com.anchor.train.common.context.LoginMemberContext;
-import com.anchor.train.common.resp.CommonResp;
-import com.anchor.train.common.resp.PageResp;
 import com.anchor.train.business.req.TrainSeatQueryReq;
 import com.anchor.train.business.req.TrainSeatSaveReq;
 import com.anchor.train.business.resp.TrainSeatQueryResp;
 import com.anchor.train.business.service.TrainSeatService;
+import com.anchor.train.common.resp.CommonResp;
+import com.anchor.train.common.resp.PageResp;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -30,10 +29,5 @@ public class TrainSeatAdminController {
         return new CommonResp<>(list);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public CommonResp<Object> delete(@PathVariable Long id) {
-        trainSeatService.delete(id);
-        return new CommonResp<>();
-    }
 
 }

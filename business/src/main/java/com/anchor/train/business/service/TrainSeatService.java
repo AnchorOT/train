@@ -73,8 +73,11 @@ public class TrainSeatService {
         return pageResp;
     }
 
-    public void delete(Long id) {
-        trainSeatMapper.deleteByPrimaryKey(id);
+    public void delete(String code) {
+        TrainSeatExample trainSeatExample = new TrainSeatExample();
+        TrainSeatExample.Criteria criteria = trainSeatExample.createCriteria();
+        criteria.andTrainCodeEqualTo(code);
+        trainSeatMapper.deleteByExample(trainSeatExample);
     }
 
     @Transactional
