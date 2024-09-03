@@ -13,6 +13,7 @@ import com.anchor.train.member.req.TicketQueryReq;
 import com.anchor.train.member.resp.TicketQueryResp;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.seata.core.context.RootContext;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class TicketService {
     private TicketMapper ticketMapper;
 
     public void save(MemberTicketReq req) throws Exception {
-        // LOG.info("seata全局事务ID save: {}", RootContext.getXID());
+         LOG.info("seata全局事务ID save: {}", RootContext.getXID());
         DateTime now = DateTime.now();
         Ticket ticket = BeanUtil.copyProperties(req, Ticket.class);
         ticket.setId(SnowUtil.getSnowflakeNextId());
@@ -61,11 +62,9 @@ public class TicketService {
         LOG.info("总行数：{}", pageInfo.getTotal());
         LOG.info("总页数：{}", pageInfo.getPages());
 
-        List
-                <TicketQueryResp> list = BeanUtil.copyToList(ticketList, TicketQueryResp.class);
+        List<TicketQueryResp> list = BeanUtil.copyToList(ticketList, TicketQueryResp.class);
 
-        PageResp
-                <TicketQueryResp> pageResp = new PageResp<>();
+        PageResp<TicketQueryResp> pageResp = new PageResp<>();
         pageResp.setTotal(pageInfo.getTotal());
         pageResp.setList(list);
         return pageResp;
